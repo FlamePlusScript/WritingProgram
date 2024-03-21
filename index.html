@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quill Document Editor</title>
+    <!-- Include Quill stylesheet -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        /* Add some styling for the editor container */
+        #editor-container {
+            height: 400px;
+        }
+        /* Styling for the title input */
+        #document-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Input for the document title -->
+    <input type="text" id="document-title" placeholder="Untitled Document" onchange="saveTitle()">
+
+    <!-- Create the editor container -->
+    <div id="editor-container"></div>
+
+    <!-- Include Quill library -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+        // Initialize Quill editor
+        var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                    ['blockquote', 'code-block'],
+
+                    [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                    [{ 'direction': 'rtl' }],                         // text direction
+
+                    [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+                    [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                    [{ 'font': [] }],
+                    [{ 'align': [] }],
+
+                    ['clean']                                         // remove formatting button
+                ]
+            }
+        });
+
+        // Function to save the content of the editor
+        function saveContent() {
+            var content = quill.getContents();
+            localStorage.setItem('quillContent', JSON.stringify(content));
+            alert('Content saved!');
+        }
+
+        // Function to load the content into the editor
+        function loadContent() {
+            var savedContent = localStorage.getItem('quillContent');
+            if (savedContent) {
+                quill.setContents(JSON.parse(savedContent));
+            }
+        }
+
+        // Function to save the title
+        function saveTitle() {
+            var title = document.getElementById('document-title').value;
+            localStorage.setItem('documentTitle', title);
+        }
+
+        // Function to load the title
+        function loadTitle() {
+            var savedTitle = localStorage.getItem('documentTitle');
+            if (savedTitle) {
+                document.getElementById('document-title').value = savedTitle;
+            }
+        }
+
+        // Load content and title when the page loads
+        window.onload = function() {
+            loadContent();
+            loadTitle();
+        };
+    </script>
+    <button onclick="saveContent()">Save Content</button>
+    <button onclick="loadContent()">Load Content</button>
+</body>
+</html>
